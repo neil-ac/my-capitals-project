@@ -1,124 +1,95 @@
-<div align="center">
+# Capitals Explorer Example
 
-<img alt="Skybridge" src="docs/static/img/github-banner.png" width="100%">
+## What This Example Showcases
 
-<br />
+This capitals explorer example demonstrates key Skybridge capabilities:
 
-# Skybridge
+- **Interactive Widget Rendering**: A React-based widget that displays an interactive map of world capitals directly in ChatGPT
+- **Display Mode Switching**: Seamless transition between inline and fullscreen display modes using `useDisplayMode()`
+- **Tool Calling from Widgets**: Widgets can call server tools programmatically using `useCallTool()` to fetch additional data
+- **Tool Info Access**: Widgets access tool input, output, and metadata via `useToolInfo()` hook
+- **Dynamic LLM Context with `data-llm`**: Uses the `data-llm` attribute to dynamically provide context to the LLM based on user interactions (e.g., which capital the user is currently viewing), enabling the LLM to understand the current widget state and respond accordingly
+- **Rich UI Components**: Multi-panel interface with:
+  - Interactive map visualization with clickable capital markers
+  - Left sidebar showing nearby capitals sorted by distance
+  - Right panel displaying detailed capital information (population, currencies, photos, Wikipedia descriptions)
+- **Structured Content & Metadata**: Server passes structured data and metadata (like all capitals list) to widgets via `_meta` and `structuredContent`
+- **External API Integration**: Demonstrates fetching data from REST Countries API and Wikipedia
+- **React Router Integration**: Shows how to use React Router within widgets for navigation
+- **Hot Module Replacement**: Live reloading of widget components during development
 
-**Build ChatGPT Apps. The Modern TypeScript Way.**
+This example serves as a comprehensive reference for building sophisticated, interactive widgets that leverage Skybridge's full feature set.
 
-The fullstack TypeScript framework for ChatGPT Apps.<br />
-**Type-safe. React-powered. Zero config.**
+## Live Demo
+Try it for yourself: `https://capitals.skybridge.tech/mcp`
 
-<br />
+## Getting Started
 
-[![NPM Version](https://img.shields.io/npm/v/skybridge?color=e90060&style=for-the-badge)](https://www.npmjs.com/package/skybridge)
-[![NPM Downloads](https://img.shields.io/npm/dm/skybridge?color=e90060&style=for-the-badge)](https://www.npmjs.com/package/skybridge)
-[![GitHub License](https://img.shields.io/github/license/alpic-ai/skybridge?color=e90060&style=for-the-badge)](https://github.com/alpic-ai/skybridge/blob/main/LICENSE)
+### Prerequisites
 
-<br />
+- Node.js 22+
+- HTTP tunnel such as [ngrok](https://ngrok.com/download)
 
-[Documentation](https://skybridge.tech) · [Quick Start](https://github.com/new?template_name=apps-sdk-template&template_owner=alpic-ai) · [Examples](https://github.com/alpic-ai/apps-sdk-template)
+### Local Development
 
-</div>
-
-<br />
-
-## ✨ Why Skybridge?
-
-ChatGPT Apps let you embed **rich, interactive UIs** directly in conversations. But the raw SDK is low-level—no hooks, no type safety, no dev tools, and no HMR.
-
-**Skybridge fixes that.**
-
-| | |
-|:--|:--|
-| 👨‍💻 **Full Dev Environment** — HMR, debug traces, and local devtools. No more refresh loops. | ✅ **End-to-End Type Safety** — tRPC-style inference from server to widget. Autocomplete everywhere. |
-| 🔄 **Widget-to-Model Sync** — Keep the model aware of UI state with `data-llm`. Dual surfaces, one source of truth. | ⚒️ **React Query-style Hooks** — `isPending`, `isError`, callbacks. State management you already know. |
-
-<br />
-
-## 🚀 Get Started
-
-**Create a new ChatGPT app:**
+#### 1. Install
 
 ```bash
-npm create skybridge@latest
+npm install
+# or
+yarn install
+# or
+pnpm install
+# or
+bun install
 ```
 
-**Or add to an existing project:**
+#### 2. Set up Mapbox API Key
+
+This example requires a Mapbox API key to display the interactive map. You'll need to provide your own Mapbox public token:
+
+1. Sign up for a free account at [Mapbox](https://www.mapbox.com/) if you don't have one
+2. Get your public access token from the [Mapbox account page](https://account.mapbox.com/access-tokens/)
+3. Create a `.env` file in the `web` directory with your Mapbox token. See `.env.example` for the format.
+
+#### 3. Start your local server
+
+Run the development server from the root directory:
 
 ```bash
-npm i skybridge
-yarn add skybridge
-pnpm add skybridge
-bun add skybridge
-deno add skybridge
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-<div align="center">
+This command starts an Express server on port 3000. This server packages:
 
-**👉 [Read the Docs](https://skybridge.tech) 👈**
+- an MCP endpoint on `/mcp` (the app backend)
+- a React application on Vite HMR dev server (the UI elements to be displayed in ChatGPT)
 
-</div>
+#### 4. Connect to ChatGPT
 
-<br />
-
-## 📦 The Stack
-
-- **`skybridge/server`** — Drop-in MCP SDK replacement with widget registration and type inference.
-- **`skybridge/web`** — React hooks and components for ChatGPT's runtime.
-
-### Server
-
-```ts
-import { McpServer } from "skybridge/server";
-
-server.registerWidget("flights", {}, {
-  inputSchema: { destination: z.string() },
-}, async ({ destination }) => {
-  const flights = await searchFlights(destination);
-  return { structuredContent: { flights } };
-});
+- ChatGPT requires connectors to be publicly accessible. To expose your server on the Internet, run:
+```bash
+ngrok http 3000
 ```
+- In ChatGPT, navigate to **Settings → Connectors → Create** and add the forwarding URL provided by ngrok suffixed with `/mcp` (e.g. `https://3785c5ddc4b6.ngrok-free.app/mcp`)
 
-### Widget
+#### 5. Test with the emulator
 
-```tsx
-import { useToolInfo } from "skybridge/web";
+Open http://localhost:3000 in your browser to test your widget using the provided emulator without needing to connect to ChatGPT.
 
-function FlightsWidget() {
-  const { output } = useToolInfo();
+## Deploy to Production
 
-  return output.structuredContent.flights.map(f =>
-    <FlightCard key={f.id} flight={f} />
-  );
-}
-```
+- Use [Alpic](https://alpic.ai/) to deploy your OpenAI App to production
+- In ChatGPT, navigate to **Settings → Connectors → Create** and add your MCP server URL (e.g., `https://your-app-name.alpic.live`)
 
-<br />
+## Resources
 
-## 🎯 Features at a Glance
-
-- **Live Reload** — Vite HMR. See changes instantly without reinstalling.
-- **Typed Hooks** — Full autocomplete for tools, inputs, outputs.
-- **Widget → Tool Calls** — Trigger server actions from UI.
-- **Dual Surface Sync** — Keep model aware of what users see with `data-llm`.
-- **React Query-style API** — `isPending`, `isError`, callbacks.
-- **MCP Compatible** — Extends the official SDK. Works with any MCP client.
-
-<br />
-
-<div align="center">
-
-[![GitHub Discussions](https://img.shields.io/badge/Discussions-Ask%20Questions-blue?style=flat-square&logo=github)](https://github.com/alpic-ai/skybridge/discussions)
-[![GitHub Issues](https://img.shields.io/badge/Issues-Report%20Bugs-red?style=flat-square&logo=github)](https://github.com/alpic-ai/skybridge/issues)
-[![Discord](https://img.shields.io/badge/Discord-Chat-5865F2?style=flat-square&logo=discord&logoColor=white)](https://discord.com/invite/gNAazGueab)
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for setup instructions
-
-<br />
-
-**[MIT License](LICENSE)** · Made with ❤️ by **[Alpic](https://alpic.ai)**
-
-</div>
+- [Apps SDK Documentation](https://developers.openai.com/apps-sdk)
+- [Model Context Protocol Documentation](https://modelcontextprotocol.io/)
+- [Alpic Documentation](https://docs.alpic.ai/)
