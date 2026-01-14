@@ -1,0 +1,35 @@
+{
+  "name": "@skybridge/monorepo",
+  "version": "0.0.0",
+  "description": "Skybridge is a framework for building ChatGPT apps",
+  "type": "module",
+  "scripts": {
+    "build": "pnpm --filter \"./packages/*\" build",
+    "test": "pnpm --filter \"./packages/*\" test",
+    "format": "pnpm --filter \"./packages/*\" format",
+    "test:unit": "pnpm --filter \"./packages/*\" test:unit",
+    "test:type": "pnpm --filter \"./packages/*\" test:type",
+    "test:format": "pnpm --filter \"./packages/*\" test:format",
+    "docs:dev": "pnpm --filter @skybridge/docs start",
+    "docs:build": "pnpm --filter @skybridge/docs build",
+    "docs:serve": "pnpm --filter @skybridge/docs serve"
+  },
+  "keywords": [
+    "chatgpt",
+    "app",
+    "ai",
+    "skybridge"
+  ],
+  "author": "Frédéric Barthelet",
+  "license": "ISC",
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.11",
+    "@total-typescript/tsconfig": "^1.0.4",
+    "@types/node": "^24.10.8",
+    "typescript": "^5.9.3"
+  },
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=24.13.0"
+  }
+}
